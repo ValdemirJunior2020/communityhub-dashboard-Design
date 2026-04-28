@@ -9,7 +9,7 @@ function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="dashboard-shell flex min-h-screen w-full overflow-x-hidden bg-slate-100">
+    <div className="dashboard-shell dashboard-scale flex min-h-screen w-full overflow-x-hidden bg-slate-100">
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
       <div className="flex min-w-0 flex-1 flex-col">
