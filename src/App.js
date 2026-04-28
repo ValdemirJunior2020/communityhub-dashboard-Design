@@ -1,4 +1,4 @@
-// src/App.js
+// C:\MyProjects\propel-properties-dashboard\src\App.js
 import React from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -13,7 +13,7 @@ function App() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />
 
-        <main className="w-full flex-1 overflow-y-auto px-8 py-7 xl:px-10 2xl:px-12">
+        <main className="w-full flex-1 overflow-y-auto px-4 py-5 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
           <MainContent />
         </main>
       </div>

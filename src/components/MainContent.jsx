@@ -1,4 +1,4 @@
-// src/components/MainContent.jsx
+// C:\MyProjects\propel-properties-dashboard\src\components\MainContent.jsx
 import React from 'react';
 import KpiCard from './KpiCard';
 import TrendChart from './TrendChart';
@@ -27,25 +27,25 @@ const MainContent = () => {
   ];
 
   return (
-    <div className="w-full max-w-none space-y-8">
-      <section className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+    <div className="w-full max-w-none space-y-6 md:space-y-8">
+      <section className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         {kpiData.map((kpi) => (
           <KpiCard key={kpi.title} {...kpi} />
         ))}
       </section>
 
-      <section className="grid w-full grid-cols-1 gap-8 xl:grid-cols-[1.05fr_1fr]">
+      <section className="grid w-full grid-cols-1 gap-6 xl:grid-cols-2 2xl:grid-cols-[1.05fr_1fr]">
         <TrendChart />
         <PropertyGrid />
       </section>
 
-      <section className="grid w-full grid-cols-1 gap-8 xl:grid-cols-[1.45fr_1fr]">
-        <div className="space-y-8">
+      <section className="grid w-full grid-cols-1 gap-6 2xl:grid-cols-[1.45fr_1fr]">
+        <div className="space-y-6 md:space-y-8">
           <MaintenanceCenter />
           <RentTracker />
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
           <SmartAlerts />
           <AiAssistant />
         </div>
