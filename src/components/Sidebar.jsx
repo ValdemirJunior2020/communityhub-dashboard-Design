@@ -6,6 +6,7 @@ import {
   Building2,
   ClipboardCheck,
   ClipboardList,
+  CreditCard,
   DollarSign,
   FileText,
   Home,
@@ -21,7 +22,7 @@ import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
 import { canManageUsers } from "../utils/permissions";
 
-const menuItems = [
+const staffMenuItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "Properties", path: "/properties", icon: Home },
   { label: "Units", path: "/units", icon: Building2 },
@@ -37,12 +38,25 @@ const menuItems = [
   { label: "Settings", path: "/settings", icon: Settings },
 ];
 
+const tenantMenuItems = [
+  { label: "Tenant Portal", path: "/tenant-portal", icon: CreditCard },
+  { label: "Receipts", path: "/tenant-portal", icon: FileText },
+  { label: "Maintenance", path: "/tenant-portal", icon: Wrench },
+];
+
 function Sidebar({ mobileOpen = false, onClose = () => {} }) {
   const { userProfile } = useAuth();
 
-  const finalMenuItems = canManageUsers(userProfile)
-    ? [...menuItems, { label: "Admin Users", path: "/admin-users", icon: ShieldCheck }]
-    : menuItems;
+  const isTenant = userProfile?.role === "tenant";
+
+  let finalMenuItems = isTenant ? tenantMenuItems : staffMenuItems;
+
+  if (!isTenant && canManageUsers(userProfile)) {
+    finalMenuItems = [
+      ...staffMenuItems,
+      { label: "Admin Users", path: "/admin-users", icon: ShieldCheck },
+    ];
+  }
 
   return (
     <>
@@ -61,7 +75,11 @@ function Sidebar({ mobileOpen = false, onClose = () => {} }) {
         }`}
       >
         <div className="flex items-center justify-between px-6 pb-6 pt-8">
-          <NavLink to="/dashboard" onClick={onClose} className="block">
+          <NavLink
+            to={isTenant ? "/tenant-portal" : "/dashboard"}
+            onClick={onClose}
+            className="block"
+          >
             <img
               src={logo}
               alt="Propel Properties"
@@ -86,7 +104,7 @@ function Sidebar({ mobileOpen = false, onClose = () => {} }) {
 
               return (
                 <NavLink
-                  key={item.path}
+                  key={`${item.label}-${item.path}`}
                   to={item.path}
                   onClick={onClose}
                   className={({ isActive }) =>

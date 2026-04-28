@@ -47,6 +47,37 @@ service cloud.firestore {
       return hasRole(["superAdmin", "admin", "manager"]);
     }
 
+    function isTenant() {
+      return hasRole(["tenant"]);
+    }
+
+    function isTenantOwnerByEmail() {
+      return isTenant()
+        && resource.data.email == request.auth.token.email;
+    }
+
+    function isTenantOwnerByUserId() {
+      return isTenant()
+        && resource.data.userId == request.auth.uid;
+    }
+
+    function isTenantPaymentOwner() {
+      return isTenant()
+        && (
+          resource.data.tenantUserId == request.auth.uid
+          || resource.data.tenantEmail == request.auth.token.email
+          || resource.data.tenantId == currentUser().tenantId
+        );
+    }
+
+    function isTenantPropertyOwner() {
+      return isTenant()
+        && (
+          resource.data.id == currentUser().propertyId
+          || resource.data.propertyId == currentUser().propertyId
+        );
+    }
+
     match /users/{userId} {
       allow create: if signedIn() && request.auth.uid == userId;
 
@@ -65,31 +96,71 @@ service cloud.firestore {
     }
 
     match /properties/{documentId} {
-      allow read: if canViewDashboard();
+      allow read: if canViewDashboard()
+        || (isTenant() && documentId == currentUser().propertyId);
+
       allow create, update, delete: if canWriteOperations();
     }
 
     match /units/{documentId} {
-      allow read: if canViewDashboard();
+      allow read: if canViewDashboard()
+        || (isTenant() && documentId == currentUser().unitId)
+        || (isTenant() && resource.data.tenantId == currentUser().tenantId);
+
       allow create, update, delete: if canWriteOperations();
     }
 
     match /tenants/{documentId} {
-      allow read: if canViewDashboard();
+      allow read: if canViewDashboard()
+        || (isTenant() && documentId == currentUser().tenantId)
+        || isTenantOwnerByEmail()
+        || isTenantOwnerByUserId();
+
       allow create, update, delete: if canWriteOperations();
     }
 
     match /rentPayments/{documentId} {
-      allow read: if canViewDashboard();
+      allow read: if canViewDashboard() || isTenantPaymentOwner();
+
       allow create, update, delete: if canWriteOperations();
     }
 
+    match /receipts/{documentId} {
+      allow read: if canViewDashboard()
+        || (
+          isTenant()
+          && (
+            resource.data.tenantUserId == request.auth.uid
+            || resource.data.tenantEmail == request.auth.token.email
+            || resource.data.tenantId == currentUser().tenantId
+            || documentId in currentUser().receiptIds
+          )
+        );
+
+      allow create, update: if canWriteOperations();
+      allow delete: if isAdmin();
+    }
+
     match /maintenanceRequests/{documentId} {
-      allow read: if canViewDashboard();
-      allow create, update, delete: if canWriteOperations()
+      allow read: if canViewDashboard()
+        || (
+          isTenant()
+          && (
+            resource.data.tenantId == currentUser().tenantId
+            || resource.data.tenantEmail == request.auth.token.email
+          )
+        );
+
+      allow create: if canWriteOperations()
+        || (
+          isTenant()
+          && request.resource.data.tenantId == currentUser().tenantId
+        );
+
+      allow update, delete: if canWriteOperations()
         || (
           hasRole(["maintenance"])
-          && request.resource.data.assignedUserId == request.auth.uid
+          && resource.data.assignedUserId == request.auth.uid
         );
     }
 
@@ -98,7 +169,7 @@ service cloud.firestore {
       allow create, update, delete: if canWriteOperations()
         || (
           hasRole(["maintenance"])
-          && request.resource.data.assignedTo == request.auth.uid
+          && resource.data.assignedTo == request.auth.uid
         );
     }
 
@@ -118,12 +189,20 @@ service cloud.firestore {
     }
 
     match /documents/{documentId} {
-      allow read: if canViewDashboard();
+      allow read: if canViewDashboard()
+        || (
+          isTenant()
+          && (
+            resource.data.relatedTenantId == currentUser().tenantId
+            || resource.data.relatedPropertyId == currentUser().propertyId
+          )
+        );
+
       allow create, update, delete: if canWriteOperations();
     }
 
     match /settings/{documentId} {
-      allow read: if canViewDashboard();
+      allow read: if canViewDashboard() || isTenant();
       allow create, update, delete: if isAdmin();
     }
 

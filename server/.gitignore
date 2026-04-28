@@ -1,0 +1,6 @@
+# C:\Users\Valdemir Goncalves\Downloads\propel-properties-dashboard-saas-ready\propel-properties-dashboard\server\.gitignore
+
+.env
+serviceAccountKey.json
+node_modules
+pokemon-e59ab-firebase-adminsdk-fbsvc-a68896c777.json
