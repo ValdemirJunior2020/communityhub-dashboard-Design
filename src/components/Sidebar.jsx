@@ -1,5 +1,6 @@
-// src/components/Sidebar.jsx
+// C:\MyProjects\propel-properties-dashboard\src\components\Sidebar.jsx
 import React, { useState } from 'react';
+import logo from '../assets/logo.png';
 import {
   IconDashboard,
   IconProperties,
@@ -16,15 +17,17 @@ import {
   IconSettings,
 } from './Icons';
 
+// C:\MyProjects\propel-properties-dashboard\src\components\Sidebar.jsx
+
+// C:\MyProjects\propel-properties-dashboard\src\components\Sidebar.jsx
+
 const Logo = () => (
-  <div className="mb-9 flex items-center gap-4 px-2">
-    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-emerald-500 text-white shadow-md">
-      <span className="text-4xl font-black leading-none">P</span>
-    </div>
-    <div className="leading-tight">
-      <p className="text-3xl font-black tracking-tight text-slate-900">Propel</p>
-      <p className="text-3xl font-black tracking-tight text-slate-900">Properties</p>
-    </div>
+  <div className="mb-10 flex w-full items-center justify-center px-2">
+    <img
+      src={logo}
+      alt="Propel Properties Logo"
+      className="h-auto w-full max-w-[260px] object-contain"
+    />
   </div>
 );
 
@@ -65,6 +68,7 @@ const Sidebar = () => {
   return (
     <aside className="sticky top-0 hidden h-screen w-[340px] shrink-0 overflow-y-auto border-r border-slate-200 bg-white px-6 py-8 lg:block">
       <Logo />
+
       <nav className="space-y-3">
         {menuItems.map((item, index) => (
           <SidebarItem
