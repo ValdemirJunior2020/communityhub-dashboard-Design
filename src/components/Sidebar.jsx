@@ -70,11 +70,11 @@ function Sidebar({ mobileOpen = false, onClose = () => {} }) {
       />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-[280px] max-w-[86vw] shrink-0 flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-[260px] lg:translate-x-0 lg:shadow-none xl:w-[280px] ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-[255px] max-w-[84vw] shrink-0 flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-[230px] lg:translate-x-0 lg:shadow-none xl:w-[245px] ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-4 pb-4 pt-5">
+        <div className="flex items-center justify-between px-3 pb-3 pt-4">
           <NavLink
             to={isTenant ? "/tenant-portal" : "/dashboard"}
             onClick={onClose}
@@ -83,7 +83,7 @@ function Sidebar({ mobileOpen = false, onClose = () => {} }) {
             <img
               src={logo}
               alt="Community Hub"
-              className="h-auto w-full max-w-[210px] object-contain"
+              className="h-auto w-full max-w-[185px] object-contain"
             />
           </NavLink>
 
@@ -93,12 +93,12 @@ function Sidebar({ mobileOpen = false, onClose = () => {} }) {
             className="rounded-xl bg-slate-100 p-2 text-slate-700 lg:hidden"
             aria-label="Close menu"
           >
-            <X size={22} />
+            <X size={20} />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 pb-5">
-          <div className="space-y-1.5">
+        <nav className="flex-1 overflow-y-auto px-2 pb-4">
+          <div className="space-y-1">
             {finalMenuItems.map((item) => {
               const Icon = item.icon;
 
@@ -108,7 +108,7 @@ function Sidebar({ mobileOpen = false, onClose = () => {} }) {
                   to={item.path}
                   onClick={onClose}
                   className={({ isActive }) =>
-                    `flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-base font-black transition xl:text-lg ${
+                    `flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-black transition xl:text-[15px] ${
                       isActive
                         ? "bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-100"
                         : "text-slate-800 hover:bg-slate-50 hover:text-slate-950"
@@ -118,7 +118,7 @@ function Sidebar({ mobileOpen = false, onClose = () => {} }) {
                   {({ isActive }) => (
                     <>
                       <span className={isActive ? "text-blue-600" : "text-slate-700"}>
-                        <Icon size={24} strokeWidth={2.4} />
+                        <Icon size={21} strokeWidth={2.4} />
                       </span>
                       <span className="truncate">{item.label}</span>
                     </>

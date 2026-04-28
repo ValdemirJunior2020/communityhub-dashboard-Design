@@ -15,7 +15,7 @@ function DashboardLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Header onMenuClick={() => setMobileOpen(true)} />
 
-        <main className="w-full flex-1 overflow-x-hidden px-3 py-4 sm:px-4 lg:px-5 xl:px-6">
+        <main className="w-full flex-1 overflow-x-hidden px-3 py-4 lg:px-4 xl:px-5">
           <DemoBanner />
           <Outlet />
         </main>
