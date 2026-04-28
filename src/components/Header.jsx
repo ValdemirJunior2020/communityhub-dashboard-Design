@@ -1,53 +1,46 @@
+// src/components/Header.jsx
 import React from 'react';
 import { IconSearch, IconBell, IconArrowDown } from './Icons';
 
-// Simple placeholder for avatar
 const PlaceholderAvatar = () => (
-  <div className="w-10 h-10 rounded-full bg-neutral-300 flex items-center justify-center text-neutral-600 font-bold border-2 border-white shadow-sm">
+  <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white bg-slate-200 text-xl font-black text-slate-700 shadow-sm">
     JD
   </div>
 );
 
 const Header = () => {
   return (
-    <header className="bg-white border-b border-neutral-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
-      <div className="flex items-center flex-1">
-        <h1 className="text-3xl font-bold text-neutral-900 mr-12">Dashboard</h1>
-        
-        {/* Search Bar */}
-        <div className="relative w-full max-w-lg">
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="w-full pl-12 pr-4 py-3 rounded-full bg-neutral-100 border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent text-neutral-800"
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-8 border-b border-slate-200 bg-white/95 px-8 py-6 backdrop-blur xl:px-10 2xl:px-12">
+      <div className="flex min-w-0 flex-1 items-center gap-10">
+        <h1 className="shrink-0 text-5xl font-black tracking-tight text-slate-950">Dashboard</h1>
+
+        <div className="relative w-full max-w-[48rem]">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="h-16 w-full rounded-2xl border border-slate-300 bg-white pl-16 pr-5 text-2xl font-bold text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
           />
-          <div className="absolute left-4 top-1/2 -translate-y-1/2">
+          <div className="absolute left-5 top-1/2 -translate-y-1/2">
             <IconSearch />
           </div>
         </div>
       </div>
 
-      <div className="flex items-center space-x-6">
-        {/* Notifications */}
-        <div className="relative cursor-pointer p-2 rounded-full hover:bg-neutral-100">
+      <div className="flex shrink-0 items-center gap-5">
+        <button type="button" className="relative rounded-full p-3 transition hover:bg-slate-100" aria-label="Notifications">
           <IconBell />
-          <span className="absolute top-1 right-1 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-error opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-error border border-white text-[9px] text-white font-bold items-center justify-center">1</span>
+          <span className="absolute right-1 top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-blue-600 px-1 text-sm font-black text-white ring-2 ring-white">
+            1
           </span>
-        </div>
+        </button>
 
-        {/* User Profile */}
-        <div className="flex items-center space-x-3 cursor-pointer">
+        <button type="button" className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xl font-black shadow-sm transition hover:bg-slate-50">
           <PlaceholderAvatar />
-          <div className="flex items-center text-neutral-800 hover:text-neutral-900">
-            <span className="font-medium">Admin</span>
-            <IconArrowDown />
-          </div>
-        </div>
+          <span className="font-black text-slate-800">Admin</span>
+          <IconArrowDown />
+        </button>
 
-        {/* Quick Action Button */}
-        <button className="flex items-center px-6 py-3 bg-brand-success text-white rounded-full font-semibold hover:bg-emerald-600 transition duration-150">
+        <button className="flex h-16 items-center gap-2 rounded-2xl bg-emerald-500 px-8 text-2xl font-black text-white shadow-sm transition hover:bg-emerald-600">
           Quick Action
           <IconArrowDown />
         </button>

@@ -1,28 +1,28 @@
+// src/components/KpiCard.jsx
 import React from 'react';
 
 const KpiCard = ({ icon, title, value, percentage, subtext }) => {
-    return (
-        <div className="bg-white p-6 rounded-3xl border border-neutral-200 shadow-sm flex flex-col space-y-4">
-            <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
-                    {icon}
-                </div>
-                {percentage !== undefined && (
-                    <span className="inline-block bg-emerald-100 text-brand-success text-sm font-bold px-3 py-1 rounded-full">
-                        {percentage}%
-                    </span>
-                )}
-            </div>
-            
-            <div>
-                <span className="text-neutral-600 font-medium mb-1">{title}</span>
-                <p className="text-4xl font-extrabold text-neutral-900">{value}</p>
-                {subtext && (
-                    <span className="text-sm text-neutral-600 mt-1">{subtext}</span>
-                )}
-            </div>
+  return (
+    <div className="dashboard-card flex min-h-[150px] flex-col justify-between p-7 transition hover:-translate-y-0.5 hover:shadow-lg">
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 ring-1 ring-blue-100">
+          {icon}
         </div>
-    );
+
+        {percentage !== undefined && (
+          <span className="rounded-full bg-emerald-50 px-4 py-2 text-xl font-black text-emerald-700 ring-1 ring-emerald-200">
+            {percentage}%
+          </span>
+        )}
+      </div>
+
+      <div>
+        <p className="mb-2 text-2xl font-black leading-tight text-slate-800">{title}</p>
+        <p className="text-4xl font-black leading-tight tracking-tight text-slate-950">{value}</p>
+        {subtext && <p className="mt-2 text-2xl font-black text-slate-700">{subtext}</p>}
+      </div>
+    </div>
+  );
 };
 
 export default KpiCard;
