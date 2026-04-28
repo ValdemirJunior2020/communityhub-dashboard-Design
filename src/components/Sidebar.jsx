@@ -1,87 +1,118 @@
-// C:\MyProjects\propel-properties-dashboard\src\components\Sidebar.jsx
-import React, { useState } from 'react';
-import logo from '../assets/logo.png';
+// C:\Users\Valdemir Goncalves\Downloads\propel-properties-dashboard-saas-ready\propel-properties-dashboard\src\components\Sidebar.jsx
+import React from "react";
+import { NavLink } from "react-router-dom";
 import {
-  IconDashboard,
-  IconProperties,
-  IconUnits,
-  IconTenants,
-  IconRent,
-  IconMaintenance,
-  IconWorkOrders,
-  IconInspections,
-  IconOwners,
-  IconVendors,
-  IconDocuments,
-  IconReports,
-  IconSettings,
-} from './Icons';
+  BarChart3,
+  Building2,
+  ClipboardCheck,
+  ClipboardList,
+  DollarSign,
+  FileText,
+  Home,
+  LayoutDashboard,
+  Settings,
+  ShieldCheck,
+  Truck,
+  Users,
+  Wrench,
+  X,
+} from "lucide-react";
+import logo from "../assets/logo.png";
+import { useAuth } from "../context/AuthContext";
+import { canManageUsers } from "../utils/permissions";
 
-// C:\MyProjects\propel-properties-dashboard\src\components\Sidebar.jsx
+const menuItems = [
+  { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Properties", path: "/properties", icon: Home },
+  { label: "Units", path: "/units", icon: Building2 },
+  { label: "Tenants", path: "/tenants", icon: Users },
+  { label: "Rent Payments", path: "/rent-payments", icon: DollarSign },
+  { label: "Maintenance", path: "/maintenance", icon: Wrench },
+  { label: "Work Orders", path: "/work-orders", icon: ClipboardList },
+  { label: "Inspections", path: "/inspections", icon: ClipboardCheck },
+  { label: "Owners", path: "/owners", icon: Users },
+  { label: "Vendors", path: "/vendors", icon: Truck },
+  { label: "Documents", path: "/documents", icon: FileText },
+  { label: "Reports", path: "/reports", icon: BarChart3 },
+  { label: "Settings", path: "/settings", icon: Settings },
+];
 
-// C:\MyProjects\propel-properties-dashboard\src\components\Sidebar.jsx
+function Sidebar({ mobileOpen = false, onClose = () => {} }) {
+  const { userProfile } = useAuth();
 
-const Logo = () => (
-  <div className="mb-10 flex w-full items-center justify-center px-2">
-    <img
-      src={logo}
-      alt="Propel Properties Logo"
-      className="h-auto w-full max-w-[260px] object-contain"
-    />
-  </div>
-);
-
-const SidebarItem = ({ icon, label, isActive, onClick }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={`flex w-full items-center gap-5 rounded-2xl px-5 py-5 text-left text-2xl font-black transition ${
-      isActive
-        ? 'bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-100'
-        : 'text-slate-700 hover:bg-slate-50 hover:text-slate-950'
-    }`}
-  >
-    <span className={isActive ? 'text-blue-600' : 'text-slate-600'}>{icon}</span>
-    <span>{label}</span>
-  </button>
-);
-
-const Sidebar = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const menuItems = [
-    { icon: <IconDashboard />, label: 'Dashboard' },
-    { icon: <IconProperties />, label: 'Properties' },
-    { icon: <IconUnits />, label: 'Units' },
-    { icon: <IconTenants />, label: 'Tenants' },
-    { icon: <IconRent />, label: 'Rent Payments' },
-    { icon: <IconMaintenance />, label: 'Maintenance' },
-    { icon: <IconWorkOrders />, label: 'Work Orders' },
-    { icon: <IconInspections />, label: 'Inspections' },
-    { icon: <IconOwners />, label: 'Owners' },
-    { icon: <IconVendors />, label: 'Vendors' },
-    { icon: <IconDocuments />, label: 'Documents' },
-    { icon: <IconReports />, label: 'Reports' },
-    { icon: <IconSettings />, label: 'Settings' },
-  ];
+  const finalMenuItems = canManageUsers(userProfile)
+    ? [...menuItems, { label: "Admin Users", path: "/admin-users", icon: ShieldCheck }]
+    : menuItems;
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-[340px] shrink-0 overflow-y-auto border-r border-slate-200 bg-white px-6 py-8 lg:block">
-      <Logo />
+    <>
+      <button
+        type="button"
+        aria-label="Close sidebar"
+        onClick={onClose}
+        className={`fixed inset-0 z-30 bg-slate-950/50 backdrop-blur-sm lg:hidden ${
+          mobileOpen ? "block" : "hidden"
+        }`}
+      />
 
-      <nav className="space-y-3">
-        {menuItems.map((item, index) => (
-          <SidebarItem
-            key={item.label}
-            icon={item.icon}
-            label={item.label}
-            isActive={index === activeIndex}
-            onClick={() => setActiveIndex(index)}
-          />
-        ))}
-      </nav>
-    </aside>
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-[340px] max-w-[88vw] shrink-0 flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:translate-x-0 lg:shadow-none ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between px-6 pb-6 pt-8">
+          <NavLink to="/dashboard" onClick={onClose} className="block">
+            <img
+              src={logo}
+              alt="Propel Properties"
+              className="h-auto w-full max-w-[245px] object-contain"
+            />
+          </NavLink>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-2xl bg-slate-100 p-3 text-slate-700 lg:hidden"
+            aria-label="Close menu"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-5 pb-8">
+          <div className="space-y-3">
+            {finalMenuItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={onClose}
+                  className={({ isActive }) =>
+                    `flex w-full items-center gap-5 rounded-2xl px-5 py-4 text-left text-xl font-black transition ${
+                      isActive
+                        ? "bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-100"
+                        : "text-slate-800 hover:bg-slate-50 hover:text-slate-950"
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span className={isActive ? "text-blue-600" : "text-slate-700"}>
+                        <Icon size={30} strokeWidth={2.4} />
+                      </span>
+                      <span>{item.label}</span>
+                    </>
+                  )}
+                </NavLink>
+              );
+            })}
+          </div>
+        </nav>
+      </aside>
+    </>
   );
-};
+}
 
 export default Sidebar;
