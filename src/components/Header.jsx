@@ -19,6 +19,9 @@ const pageTitles = {
   "/reports": "Reports",
   "/settings": "Settings",
   "/admin-users": "Admin Users",
+  "/tenant-portal": "Tenant Portal",
+  "/payment-success": "Payment Success",
+  "/payment-cancel": "Payment Cancelled",
 };
 
 function getInitials(nameOrEmail) {
@@ -42,7 +45,12 @@ function Header({ onMenuClick }) {
   const { currentUser, userProfile, logout } = useAuth();
 
   const pageTitle = pageTitles[location.pathname] || "Dashboard";
-  const displayName = userProfile?.fullName || currentUser?.displayName || currentUser?.email || "Admin";
+  const displayName =
+    userProfile?.fullName ||
+    currentUser?.displayName ||
+    currentUser?.email ||
+    "Admin";
+
   const initials = getInitials(displayName);
 
   async function handleLogout() {
@@ -51,75 +59,75 @@ function Header({ onMenuClick }) {
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-4 py-5 backdrop-blur-xl sm:px-6 lg:px-8 xl:px-10">
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-        <div className="flex min-w-0 items-center gap-4">
+    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-xl sm:px-5 lg:px-6 xl:px-7">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={onMenuClick}
-            className="rounded-2xl bg-slate-100 p-3 text-slate-800 transition hover:bg-slate-200 lg:hidden"
+            className="rounded-xl bg-slate-100 p-2 text-slate-800 transition hover:bg-slate-200 lg:hidden"
+            aria-label="Open menu"
           >
-            <Menu size={28} />
+            <Menu size={24} />
           </button>
 
-          <h1 className="shrink-0 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
+          <h1 className="truncate text-2xl font-black tracking-tight text-slate-950 sm:text-3xl xl:text-4xl">
             {pageTitle}
           </h1>
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row xl:items-center xl:justify-end">
-          <div className="relative w-full xl:max-w-[36rem]">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
+          <div className="relative hidden w-full max-w-[24rem] lg:block xl:max-w-[30rem]">
             <input
               type="text"
               placeholder="Search..."
-              className="h-16 w-full rounded-2xl border border-slate-300 bg-white pl-14 pr-5 text-xl font-bold text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              className="h-12 w-full rounded-2xl border border-slate-300 bg-white pl-12 pr-4 text-base font-bold text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
             />
             <Search
-              size={30}
-              className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
+              size={23}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
             />
           </div>
 
-          <div className="flex shrink-0 items-center gap-3 sm:gap-5">
-            <button
-              type="button"
-              className="relative rounded-full p-3 text-slate-700 transition hover:bg-slate-100"
-              aria-label="Notifications"
-            >
-              <Bell size={32} />
-              <span className="absolute right-1 top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-blue-600 px-1 text-sm font-black text-white ring-2 ring-white">
-                1
-              </span>
-            </button>
+          <button
+            type="button"
+            className="relative rounded-xl p-2 text-slate-700 transition hover:bg-slate-100"
+            aria-label="Notifications"
+          >
+            <Bell size={25} />
+            <span className="absolute right-0 top-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[11px] font-black text-white ring-2 ring-white">
+              1
+            </span>
+          </button>
 
-            <button
-              type="button"
-              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-lg font-black shadow-sm transition hover:bg-slate-50"
-            >
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-base font-black text-white">
-                {initials}
-              </span>
-              <ChevronDown size={24} className="text-slate-700" />
-            </button>
+          <button
+            type="button"
+            className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-2 py-2 text-sm font-black shadow-sm transition hover:bg-slate-50 sm:px-3"
+            title={displayName}
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-black text-white">
+              {initials}
+            </span>
+            <ChevronDown size={20} className="hidden text-slate-700 sm:block" />
+          </button>
 
-            <button
-              type="button"
-              onClick={() => navigate("/properties")}
-              className="hidden h-16 items-center gap-2 rounded-2xl bg-emerald-500 px-7 text-xl font-black text-white shadow-sm transition hover:bg-emerald-600 sm:flex"
-            >
-              Quick Action
-              <ChevronDown size={24} />
-            </button>
+          <button
+            type="button"
+            onClick={() => navigate("/properties")}
+            className="hidden h-12 items-center gap-2 rounded-2xl bg-emerald-500 px-4 text-base font-black text-white shadow-sm transition hover:bg-emerald-600 xl:flex"
+          >
+            Quick Action
+            <ChevronDown size={20} />
+          </button>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex h-16 items-center justify-center rounded-2xl bg-slate-950 px-5 text-white transition hover:bg-slate-800"
-              title="Logout"
-            >
-              <LogOut size={24} />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white transition hover:bg-slate-800"
+            title="Logout"
+          >
+            <LogOut size={22} />
+          </button>
         </div>
       </div>
     </header>
