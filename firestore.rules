@@ -1,109 +1,135 @@
-// firestore.rules
+// C:\Users\Valdemir Goncalves\Downloads\propel-properties-dashboard-saas-ready\propel-properties-dashboard\firestore.rules
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() {
       return request.auth != null;
     }
 
-    function userDoc() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    function userPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
     }
 
-    function hasProfile() {
-      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    function hasUserProfile() {
+      return signedIn() && exists(userPath());
     }
 
-    function role() {
-      return hasProfile() ? userDoc().data.role : null;
+    function currentUser() {
+      return get(userPath()).data;
     }
 
-    function status() {
-      return hasProfile() ? userDoc().data.status : null;
+    function isActive() {
+      return hasUserProfile() && currentUser().status == "active";
     }
 
-    function active() {
-      return signedIn() && status() == 'active';
+    function hasRole(roles) {
+      return isActive() && currentUser().role in roles;
     }
 
     function isSuperAdmin() {
-      return active() && role() == 'superAdmin';
+      return hasRole(["superAdmin"]);
     }
 
     function isAdmin() {
-      return active() && (role() == 'superAdmin' || role() == 'admin');
+      return hasRole(["superAdmin", "admin"]);
     }
 
-    function isManager() {
-      return active() && (role() == 'superAdmin' || role() == 'admin' || role() == 'manager');
+    function isManagerOrAbove() {
+      return hasRole(["superAdmin", "admin", "manager"]);
     }
 
-    function isViewer() {
-      return active() && (role() == 'superAdmin' || role() == 'admin' || role() == 'manager' || role() == 'viewer');
+    function canViewDashboard() {
+      return hasRole(["superAdmin", "admin", "manager", "maintenance", "viewer"]);
     }
 
-    function isMaintenance() {
-      return active() && role() == 'maintenance';
-    }
-
-    function operationalCollections() {
-      return ['properties', 'units', 'tenants', 'rentPayments', 'inspections', 'owners', 'vendors', 'documents'];
+    function canWriteOperations() {
+      return hasRole(["superAdmin", "admin", "manager"]);
     }
 
     match /users/{userId} {
-      allow create: if signedIn()
-        && request.auth.uid == userId
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.role == 'viewer'
-        && request.resource.data.status == 'active';
+      allow create: if signedIn() && request.auth.uid == userId;
 
-      allow read: if isManager() || (active() && request.auth.uid == userId);
+      allow get: if signedIn() && request.auth.uid == userId;
+      allow list: if isAdmin();
 
       allow update: if isAdmin()
-        || (active()
+        || (
+          signedIn()
           && request.auth.uid == userId
-          && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'status', 'uid', 'email', 'createdAt']));
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.status == resource.data.status
+        );
 
-      allow delete: if isSuperAdmin() && request.auth.uid != userId;
+      allow delete: if isSuperAdmin();
     }
 
-    match /{collectionName}/{documentId} {
-      allow read: if collectionName in operationalCollections() && (isViewer() || isMaintenance());
-      allow create, update: if collectionName in operationalCollections() && isManager();
-      allow delete: if collectionName in operationalCollections() && isAdmin();
+    match /properties/{documentId} {
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations();
+    }
+
+    match /units/{documentId} {
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations();
+    }
+
+    match /tenants/{documentId} {
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations();
+    }
+
+    match /rentPayments/{documentId} {
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations();
     }
 
     match /maintenanceRequests/{documentId} {
-      allow read: if isViewer() || isManager() || (isMaintenance() && resource.data.assignedUserId == request.auth.uid);
-      allow create: if isManager();
-      allow update: if isManager()
-        || (isMaintenance()
-          && resource.data.assignedUserId == request.auth.uid
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations()
+        || (
+          hasRole(["maintenance"])
           && request.resource.data.assignedUserId == request.auth.uid
-          && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['propertyId', 'tenantId', 'unitId', 'assignedUserId', 'assignedVendorId', 'cost']));
-      allow delete: if isAdmin();
+        );
     }
 
     match /workOrders/{documentId} {
-      allow read: if isViewer() || isManager() || (isMaintenance() && (resource.data.assignedUserId == request.auth.uid || resource.data.assignedTo == request.auth.token.email));
-      allow create: if isManager();
-      allow update: if isManager()
-        || (isMaintenance()
-          && (resource.data.assignedUserId == request.auth.uid || resource.data.assignedTo == request.auth.token.email)
-          && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['propertyId', 'unitId', 'vendorId', 'estimatedCost']));
-      allow delete: if isAdmin();
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations()
+        || (
+          hasRole(["maintenance"])
+          && request.resource.data.assignedTo == request.auth.uid
+        );
+    }
+
+    match /inspections/{documentId} {
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations();
+    }
+
+    match /owners/{documentId} {
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations();
+    }
+
+    match /vendors/{documentId} {
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations();
+    }
+
+    match /documents/{documentId} {
+      allow read: if canViewDashboard();
+      allow create, update, delete: if canWriteOperations();
     }
 
     match /settings/{documentId} {
-      allow read: if active();
+      allow read: if canViewDashboard();
       allow create, update, delete: if isAdmin();
     }
 
     match /auditLogs/{documentId} {
       allow read: if isAdmin();
-      allow create: if active()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.userEmail == request.auth.token.email;
+      allow create: if isManagerOrAbove();
       allow update, delete: if false;
     }
   }
