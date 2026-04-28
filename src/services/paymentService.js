@@ -1,9 +1,14 @@
 // C:\Users\Valdemir Goncalves\Downloads\propel-properties-dashboard-saas-ready\propel-properties-dashboard\src\services\paymentService.js
 import { auth } from "../firebase/firebase";
+import { APP_MODE } from "../config/appMode";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
 export async function startRentCheckout(paymentId) {
+  if (APP_MODE.isDemo) {
+    throw new Error(APP_MODE.demoLockMessage);
+  }
+
   if (!paymentId) {
     throw new Error("Missing payment ID.");
   }
@@ -32,7 +37,7 @@ export async function startRentCheckout(paymentId) {
   }
 
   if (!data.url) {
-    throw new Error("Stripe checkout URL was not returned.");
+    throw new Error("Payment checkout URL was not returned.");
   }
 
   window.location.href = data.url;
