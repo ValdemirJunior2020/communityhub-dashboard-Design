@@ -1,49 +1,127 @@
-// src/pages/ForgotPassword.jsx
+// C:\Users\Valdemir Goncalves\Downloads\propel-properties-dashboard-saas-ready\propel-properties-dashboard\src\pages\ForgotPassword.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { ArrowLeft, Mail } from "lucide-react";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
 function ForgotPassword() {
-  const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState({
+    loading: false,
+    error: "",
+    success: "",
+  });
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setMessage("");
-    setError("");
-    setLoading(true);
+
+    setStatus({
+      loading: true,
+      error: "",
+      success: "",
+    });
+
     try {
-      await resetPassword(email);
-      setMessage("Password reset email sent. Check your inbox.");
-    } catch (err) {
-      setError(err.message || "Unable to send password reset email.");
-    } finally {
-      setLoading(false);
+      const response = await fetch(`${API_BASE_URL}/api/auth/send-password-reset`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to send password reset email.");
+      }
+
+      setStatus({
+        loading: false,
+        error: "",
+        success:
+          "Password reset email sent. Please check your inbox for the Community Hub reset link.",
+      });
+    } catch (error) {
+      setStatus({
+        loading: false,
+        error: error.message || "Unable to send password reset email.",
+        success: "",
+      });
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-8">
-      <section className="w-full max-w-xl rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8">
-        <p className="text-sm font-black uppercase tracking-[0.28em] text-blue-600">Password help</p>
-        <h1 className="mt-3 text-4xl font-black text-slate-950">Reset your password</h1>
-        <p className="mt-2 text-lg font-semibold text-slate-500">Enter your account email and Firebase will send a reset link.</p>
-        {message ? <div className="mt-5 rounded-2xl bg-emerald-50 p-4 text-base font-bold text-emerald-700">{message}</div> : null}
-        {error ? <div className="mt-5 rounded-2xl bg-red-50 p-4 text-base font-bold text-red-700">{error}</div> : null}
-        <form onSubmit={handleSubmit} className="mt-7 space-y-5">
-          <label className="block">
-            <span className="text-sm font-black uppercase tracking-wide text-slate-500">Email</span>
-            <input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-4 text-lg font-bold outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
-          </label>
-          <button disabled={loading} type="submit" className="w-full rounded-2xl bg-blue-600 px-5 py-4 text-xl font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:opacity-60">
-            {loading ? "Sending..." : "Send reset link"}
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10">
+      <div className="w-full max-w-md rounded-[2rem] bg-white p-8 shadow-2xl">
+        <Link
+          to="/login"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-black text-blue-600 hover:text-blue-700"
+        >
+          <ArrowLeft size={18} />
+          Back to login
+        </Link>
+
+        <div className="mb-8">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+            <Mail size={30} />
+          </div>
+
+          <p className="text-sm font-black uppercase tracking-[0.3em] text-blue-600">
+            Password Reset
+          </p>
+
+          <h1 className="mt-2 text-4xl font-black text-slate-950">
+            Reset your password
+          </h1>
+
+          <p className="mt-3 text-base font-bold text-slate-600">
+            Enter your email and the Community Hub Team will send you a secure reset link.
+          </p>
+        </div>
+
+        {status.error ? (
+          <div className="mb-5 rounded-2xl bg-red-50 p-4 text-sm font-black text-red-700">
+            {status.error}
+          </div>
+        ) : null}
+
+        {status.success ? (
+          <div className="mb-5 rounded-2xl bg-emerald-50 p-4 text-sm font-black text-emerald-700">
+            {status.success}
+          </div>
+        ) : null}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="mb-2 block text-sm font-black uppercase tracking-widest text-slate-500">
+              Email Address
+            </label>
+
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@email.com"
+              className="h-14 w-full rounded-2xl border border-slate-300 px-4 text-base font-bold text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={status.loading}
+            className="h-14 w-full rounded-2xl bg-blue-600 text-base font-black text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {status.loading ? "Sending..." : "Send Reset Email"}
           </button>
         </form>
-        <Link className="mt-6 block text-center text-base font-black text-blue-600" to="/login">Back to login</Link>
-      </section>
+
+        <p className="mt-6 text-center text-sm font-bold text-slate-500">
+          Need help? Contact Valdemir R. Goncalves Junior at infojr.83@gmail.com
+        </p>
+      </div>
     </div>
   );
 }
