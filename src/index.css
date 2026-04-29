@@ -35,29 +35,32 @@ a {
   text-decoration: none;
 }
 
-/* Keep the dashboard compact without breaking Tailwind */
-@media (min-width: 1024px) {
-  .dashboard-scale {
-    transform: scale(0.88);
-    transform-origin: top left;
-    width: 113.64%;
-    min-height: 113.64vh;
-  }
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
 }
 
-@media (min-width: 1400px) {
-  .dashboard-scale {
-    transform: scale(0.82);
-    transform-origin: top left;
-    width: 121.95%;
-    min-height: 121.95vh;
-  }
+table {
+  border-collapse: collapse;
 }
 
-@media (max-width: 1023px) {
-  .dashboard-scale {
-    transform: none;
-    width: 100%;
-    min-height: 100vh;
-  }
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e2e8f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
